@@ -5,7 +5,6 @@ class HistoryService:
   def __init__(self) -> None:
     self.__history_repository = HistoryRepository()
 
-  
   def get_all(self) -> Dict:
     return self.__history_repository.get_all()
   
