@@ -1,15 +1,18 @@
 from typing import Dict, List
-from src.models.settings.connection import db_connection_handler
-from src.models.entities.user import User
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.orm import Session
+
+from src.models.entities.user import User
 
 class UserRepository:
+  def __init__(self, session: Session):
+    self.session = session
+
   def get_all(self) -> List[Dict]:
-    with db_connection_handler as database:
       try:
         users = (
-          database.session
+          self.session
           .query(User)
           .all()
         )
@@ -22,10 +25,9 @@ class UserRepository:
         raise exception
       
   def get_by_id(self, user_id: int) -> Dict:
-    with db_connection_handler as database:
       try:
         user = (
-          database.session
+          self.session
           .query(User)
           .filter(User.id == user_id)
           .one()
@@ -36,16 +38,30 @@ class UserRepository:
       except NoResultFound:
         return None
   
-  def create(self, userInfo: Dict) -> Dict:
-    with db_connection_handler as database:
+  def get_user_by_username(self, username: str) -> Dict:
+    # try:
+    #   user = (
+    #     self.session
+    #     .query(User)
+    #     .filter(User.username == username)
+    #     .first()
+    #   )
+
+    #   return user
+        
+    # except NoResultFound:
+    #   return None
+    return self.session.query(User).filter(User.username == username).first()
+
+  def create(self, userInfo: Dict, hashed_password: str) -> Dict:
       try:
         user = User(
           username=userInfo["username"],
-          password=userInfo["password"]
+          password=hashed_password
         )
 
-        database.session.add(user)
-        database.session.commit()
+        self.session.add(user)
+        self.session.commit()
 
         return userInfo
       
@@ -53,14 +69,13 @@ class UserRepository:
         raise Exception("User already exists!")
 
       except Exception as exception:
-        database.session.rollback()
+        self.session.rollback()
         raise exception
       
   def update(self, user_id: int, userInfo: Dict) -> Dict:
-    with db_connection_handler as database:
       try:
         user = (
-          database.session
+          self.session
           .query(User)
           .filter(User.id == user_id)
           .one()
@@ -69,7 +84,7 @@ class UserRepository:
         user.username = userInfo["username"]
         user.password = userInfo["password"]
 
-        database.session.commit()
+        self.session.commit()
 
         return userInfo
       
@@ -77,25 +92,25 @@ class UserRepository:
         return None
 
       except Exception as exception:
-        database.session.rollback()
+        self.session.rollback()
         raise exception
       
   def delete(self, user_id: int) -> None:
-    with db_connection_handler as database:
       try:
         user = (
-          database.session
+          self.session
           .query(User)
           .filter(User.id == user_id)
           .one()
         )
 
-        database.session.delete(user)
-        database.session.commit()
+        self.session.delete(user)
+        self.session.commit()
       
       except NoResultFound:
         return None
 
       except Exception as exception:
-        database.session.rollback()
+        self.session.rollback()
         raise exception
+  

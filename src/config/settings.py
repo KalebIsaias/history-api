@@ -1,8 +1,9 @@
 import os
-from typing import Optional
+from typing import Optional, ClassVar
 
 from dotenv import load_dotenv
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings  
+from sqlalchemy import URL
 
 load_dotenv()
 
@@ -33,7 +34,13 @@ class Settings(BaseSettings):
     POSTGRES_DB: str = os.getenv("POSTGRES_DB")
     POSTGRES_USER: str = os.getenv("POSTGRES_USER")
     POSTGRES_PASSWORD: str = os.getenv("POSTGRES_PASSWORD")
-    POSTGRES_CONNECTION_STRING: str = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
-
+    # POSTGRES_CONNECTION_STRING: str = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_DB}"
+    POSTGRES_CONNECTION_STRING: ClassVar[str] = URL.create(
+        "postgresql",
+        username=POSTGRES_USER,
+        password=POSTGRES_PASSWORD,
+        host=POSTGRES_HOST,
+        database=POSTGRES_DB
+    )
 
 settings = Settings()

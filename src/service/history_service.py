@@ -1,9 +1,12 @@
 from typing import Dict
+
+from sqlalchemy.orm import Session
+
 from src.models.repositories.history_repository import HistoryRepository  
 
 class HistoryService:
-  def __init__(self) -> None:
-    self.__history_repository = HistoryRepository()
+  def __init__(self, session: Session) -> None:
+    self.__history_repository = HistoryRepository(session)
 
   def get_all(self) -> Dict:
     return self.__history_repository.get_all()
