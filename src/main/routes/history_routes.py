@@ -3,8 +3,11 @@ from typing import Dict
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from src.service.history_service import HistoryService
+from src.auth.auth import get_current_user
 from src.models.settings.connection import get_db
+from src.schemas.user import UserInDB
+from src.service.history_service import HistoryService
+
 
 router = APIRouter(
   prefix="/history",
@@ -13,7 +16,8 @@ router = APIRouter(
 
 @router.get("/", status_code=200)
 def get_all_history(
-  session: Session = Depends(get_db)
+  session: Session = Depends(get_db),
+  current_user: UserInDB = Depends(get_current_user)
 ):
     _service = HistoryService(session)
     return _service.get_all()
@@ -21,7 +25,8 @@ def get_all_history(
 @router.get("/{history_id}", status_code=200)
 def get_history_by_id(
   history_id: int,
-  session: Session = Depends(get_db)
+  session: Session = Depends(get_db),
+  current_user: UserInDB = Depends(get_current_user)
 ):
     _service = HistoryService(session)
     return _service.get_by_id(history_id)
@@ -29,7 +34,8 @@ def get_history_by_id(
 @router.post("/", status_code=201, response_model=Dict)
 def create_history(
   data: Dict,
-  session: Session = Depends(get_db)
+  session: Session = Depends(get_db),
+  current_user: UserInDB = Depends(get_current_user)
 ):
     _service = HistoryService(session)
     return _service.create(data)
@@ -38,7 +44,8 @@ def create_history(
 def update_history(
   history_id: int,
   data: Dict,
-  session: Session = Depends(get_db)
+  session: Session = Depends(get_db),
+  current_user: UserInDB = Depends(get_current_user)
 ):
     _service = HistoryService(session)
     return _service.update(history_id, data)
@@ -46,7 +53,8 @@ def update_history(
 @router.delete("/{history_id}", status_code=200)
 def delete_history(
   history_id: int,
-  session: Session = Depends(get_db)
+  session: Session = Depends(get_db),
+  current_user: UserInDB = Depends(get_current_user)
 ):
     _service = HistoryService(session)
     return _service.delete(history_id)
