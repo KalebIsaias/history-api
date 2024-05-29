@@ -40,6 +40,15 @@ def create_history(
     _service = HistoryService(session)
     return _service.create(data)
 
+@router.post("/{history_id}/enhance", status_code=200)
+def enhance_history(
+  history_id: int,
+  session: Session = Depends(get_db),
+  current_user: UserInDB = Depends(get_current_user)
+):
+    _service = HistoryService(session)
+    return _service.enchance_history(history_id)
+
 @router.put("/{history_id}", status_code=200, response_model=Dict)
 def update_history(
   history_id: int,
