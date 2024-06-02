@@ -1,0 +1,6 @@
+fastapi
+python-jose
+sqlalchemy
+google-generativeai
+pydantic
+pytest

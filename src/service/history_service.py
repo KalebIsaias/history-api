@@ -7,7 +7,7 @@ from src.config.settings import settings
 from src.models.repositories.history_repository import HistoryRepository  
 
 genai.configure(api_key=settings.GOOGLE_API_KEY)
-model = genai.GenerativeModel('gemini-1.0-pro-latest')
+model = genai.GenerativeModel('gemini-1.5-pro-latest')
 
 class HistoryService:
   def __init__(self, session: Session) -> None:
