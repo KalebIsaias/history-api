@@ -36,6 +36,7 @@ Crie um arquivo .env na raiz do repositório e cole:
 ```
 DEBUG=False
 TITLE=History API
+ORIGINS=
 SECRET_KEY=test
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
@@ -51,7 +52,7 @@ GOOGLE_API_KEY=AIzaSyBtOGD2imhSbkPWePDh4DZRWhhYBANsJ20
 ### Passo 5: Inicie o servidor
 
 ```
-uvicorn src.main:app --reload
+uvicorn main:app --reload
 ```
 
 A API estará disponível em http://localhost:8000
